@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Attendance</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        video { width: 100%; max-width: 400px; }
+    </style>
+</head>
+<body>
+    <h1>Face Attendance</h1>
+    <video id="video" autoplay playsinline></video>
+    <button id="capture">Check In</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+    <script>
+    const video = document.getElementById('video');
+    async function startCamera() {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+    }
+
+    async function getEmbedding() {
+        await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
+        await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
+        const detections = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
+        if (!detections) return null;
+        return Array.from(detections.descriptor);
+    }
+
+    document.getElementById('capture').onclick = async () => {
+        const embedding = await getEmbedding();
+        if (!embedding) {
+            alert('No face detected');
+            return;
+        }
+        const res = await fetch('/api/identify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ vector: embedding })
+        });
+        if (res.ok) {
+            const data = await res.json();
+            alert('Welcome ' + data.user_id + ' score: ' + data.score.toFixed(2));
+        } else {
+            alert('Face not recognized');
+        }
+    };
+
+    startCamera();
+    </script>
+</body>
+</html>

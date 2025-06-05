@@ -35,30 +35,34 @@
 
 3. **Chạy dự án**:
    ```bash
-   python main.py
+   uvicorn api.identify:app --reload
    ```
 
 ## Hướng dẫn sử dụng
 
 1. Cài đặt hệ thống và đảm bảo kết nối camera hoạt động.
-2. Chạy tập tin chính `main.py` để khởi động chương trình.
-3. Thực hiện các bước sau trong giao diện:
-   - Đăng ký khuôn mặt mới.
-   - Tiến hành điểm danh bằng cách đối chiếu khuôn mặt.
-   - Kiểm tra và xuất báo cáo điểm danh.
+2. Chạy server FastAPI bằng lệnh ở trên.
+3. Mở `frontend/index.html` trên trình duyệt để chụp ảnh và gửi embedding.
+4. Hệ thống sẽ trả về kết quả nhận diện và ghi nhận chấm công.
 
 ## Cấu trúc thư mục
 
 ```plaintext
 face-atendance/
 │
-├── main.py              # Tệp khởi động chính
-├── models/              # Lưu trữ các mô hình nhận diện khuôn mặt
-├── data/                # Dữ liệu người dùng và hình ảnh
-├── utils/               # Các công cụ hỗ trợ
-├── requirements.txt     # Danh sách thư viện cần thiết
+├── api/                 # FastAPI serverless functions
+│   └── identify.py      # API nhận diện khuôn mặt
+├── frontend/            # Giao diện web đơn giản
+│   └── index.html
+├── requirements.txt     # Thư viện Python cần thiết
 └── README.md            # Tệp hướng dẫn (bạn đang đọc)
 ```
+
+## Deploy lên Vercel
+1. Tạo GitHub repository và push mã nguồn này.
+2. Vào dashboard Vercel, chọn **New Project** và kết nối tới repo.
+3. Thiết lập thư mục root ở repo và đảm bảo Vercel nhận diện thư mục `api/` làm Serverless Functions.
+4. Mỗi lần push lên GitHub, Vercel sẽ tự động build và cung cấp URL cho hệ thống.
 
 ## Đóng góp
 Chúng tôi khuyến khích các đóng góp từ cộng đồng! Nếu bạn muốn đóng góp, hãy thực hiện các bước sau:
@@ -79,6 +83,3 @@ Nếu bạn có bất kỳ câu hỏi hoặc đề xuất nào, vui lòng liên 
 ---
 
 Cảm ơn bạn đã sử dụng **Face Attendance System**!
-```
-
-Hãy cho tôi biết nếu bạn muốn thêm thông tin cụ thể hoặc thay đổi một phần nào đó của README này!
